@@ -7,12 +7,18 @@
         "url": "git+https://github.com/bassoon1011/wetube-reloaded.git"
     },
     "scripts": {
-        "dev": "nodemon --exec babel-node src/server.js"
+        "dev": "nodemon --exec babel-node src/init.js"
     },
     "author": "Jaewon",
-    "license": "ISC",
+    "license": "MIT",
+    "bug": {
+        "URL": "https://github.com/bassoon1011/wetube-reloaded/issues"
+    },
+    "homepage": "https://github.com/bassoon1011/wetube-reloaded#readme",
+
     "dependencies": {
         "express": "^4.18.2",
+        "mongoose": "^7.6.1",
         "morgan": "^1.10.0",
         "pug": "^3.0.2"
     },

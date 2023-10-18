@@ -5,7 +5,7 @@ import Video from "../models/Video";
  * 대문자 Video는 Model이고 소문자 video는 데이터베이스에서 검색한 영상 object.
  */
 export const home = async (req, res) => {
-    const videos = await Video.find({});
+    const videos = await Video.find({}).sort({ createdAt: "desc" });
     return res.render("home", { pageTitle: "Home", videos });
 };
 export const watch = async (req, res) => {
@@ -71,11 +71,23 @@ export const postUpload = async (req, res) => {
             errorMessage: error._message,
         });
     }
-};
-    
+}; 
     /** save가 promise를 return해줌. await를 넣는 이유는 비디오를 서버에 저장하는데 시간이 걸리기 때문 */
 export const deleteVideo = async (req, res) => {
     const { id } = req.params;
     await Video.findByIdAndDelete(id);
     return res.redirect("/");
+};
+
+export const search = async (req, res) => {
+    const { keyword } = req.query;
+    let videos = [];
+    if (keyword) {
+        videos = await Video.find({
+            title: {
+                $regex: new RegExp(`${keyword}$`, "i"),
+            },
+        });
+    }
+    return res.render("search", { pageTitle: "Search", videos });
 };

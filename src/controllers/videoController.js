@@ -15,7 +15,7 @@ export const watch = async (req, res) => {
     if(!video) {
         /**  return을 여기에 꼭 넣어야하는게 return을 안넣어놓으면 밑에까지 가지 
              말아야할때 밑에의 return까지 작동시켜버림. */
-        return res.render("404", { pageTitle:"Video not found." });
+        return res.status(404).render("404", { pageTitle:"Video not found." });
     }
     return res.render("watch", { pageTitle: video.title, video }); 
 };
@@ -26,7 +26,7 @@ export const getEdit = async (req, res) => {
      * 보내야하기 때문 */
     const video = await Video.findById(id);
     if(!video) {
-        return res.render("404", { pageTitle: "Video not found." });
+        return res.status(404).render("404", { pageTitle: "Video not found." });
     }
     return res.render("edit", { pageTitle: `Edit ${video.title}`, video });
 };
@@ -66,7 +66,7 @@ export const postUpload = async (req, res) => {
         });
         return res.redirect("/");
     }   catch (error) {
-        return res.render("upload", {
+        return res.status(400).render("upload", {
             pageTitle: "Upload Video",
             errorMessage: error._message,
         });

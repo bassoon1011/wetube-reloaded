@@ -130,6 +130,8 @@ export const finishGithubLogin = async (req, res) => {
                 location: userData.location,
             });
         }
+        /** 프론트엔드는 이 세션으로부터 정보를 얻는다. 유저가 로그인할때만 session이 입력되기때문에 profile edit을 할때에도 
+         * session을 업데이트 해줘야함 */
         req.session.loggedIn = true;
         req.session.user = user;
         return res.redirect("/");
@@ -146,8 +148,62 @@ export const logout = (req, res) => {
 export const getEdit = (req, res) => {
     return res.render("edit-profile", { pageTitle: "Edit Profile" });
 };
-export const postEdit = (req, res) => {
-    return res.render("edit-profile");
+export const postEdit = async (req, res) => {
+    /** Session에서 로그인된 사용자를 확인하는 것 */
+    const {
+        session: {
+            user: { _id },
+        },
+        body: { name, email, username, location },
+        file,
+    } =req;
+    console.log(file);
+    const updatedUser = await User.findByIdAndUpdate(
+        _id,
+        {
+            name,
+            email,
+            username,
+            location,
+        },
+        { new: true }
+    );
+    /** res.session.user안에 있는 내용을 전해주는 것 */
+    req.session.user = updatedUser
+    return res.redirect("/users/edit");
+};
+
+export const getChangePassword = (req, res) => {
+    if (req.session.user.socialOnly === true) {
+        return res.redirect("/");
+    }
+    /** change-password를 base template로부터 extend 할건데 base template에는 pageTitle이 꼭 필요하다 */
+    return res.render("users/change-password", { pageTitle: "Change Password" });
+};
+export const postChangePassword = async (req, res) => {
+    const {
+        session: {
+            user: { id },
+        },
+        body: { oldPassword, newPassword, newPasswordConfirmation },
+    } = req;
+    const user = await User.findById(_id);
+    const ok = await bcrypt.compare(oldPassword, user.password);
+    if (!ok) {
+        return res.status(400).render("users/change-password", {
+            pageTitle: "Change Password",
+            errorMessage: "The current password is incorrent",
+        });
+    }
+    if (newPassword !== newPasswordConfirmation) {
+        return res.status(400).render("users/change-password", {
+            pageTitle: "Change Password",
+            errorMessage: "The password does not match the confirmation",
+        });
+    }
+    user.password = newPassword;
+    await user.save();
+    return res.redirect("/users/logout");
 };
 
 export const see = (req,res) => res.send("See User");

@@ -1,3 +1,5 @@
+import multer from "multer";
+
 export const localsMiddleware = (req, res, next)  => {
     res.locals.loggedIn = Boolean(req.session.loggedIn);
     res.locals.siteName = "Wetube";
@@ -20,3 +22,5 @@ export const publicOnlyMiddleware = (req, res, next) => {
         return res.redirect("/");
     }
 };
+ /** 유저가 업로드하는 모든 파일을 우리 서버의 uploads폴더에 저장하라고 하는것 */
+export const uploadFiles = multer({ dest: "uploads/" });

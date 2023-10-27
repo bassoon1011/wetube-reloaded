@@ -152,15 +152,17 @@ export const postEdit = async (req, res) => {
     /** Session에서 로그인된 사용자를 확인하는 것 */
     const {
         session: {
-            user: { _id },
+            user: { _id, avatarUrl },
         },
         body: { name, email, username, location },
         file,
     } =req;
-    console.log(file);
     const updatedUser = await User.findByIdAndUpdate(
         _id,
         {
+            /** 유저가 파일을 form으로 보낸다면 file.path 를 쓰고, 
+             * 파일이 존재하지 않는다면 기존 avatarUrl을 유지할거다  */
+            avatarUrl: file ? file.path : avatarUrl,
             name,
             email,
             username,

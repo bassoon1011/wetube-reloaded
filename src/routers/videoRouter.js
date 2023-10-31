@@ -6,7 +6,7 @@ import {
     postEdit,
     postUpload,
 } from "../controllers/videoController";
-import { protectorMiddleware } from "../middlewares";
+import { protectorMiddleware, videoUpload } from "../middlewares";
 
 const videoRouter = express.Router();
 
@@ -33,7 +33,8 @@ videoRouter
     .route("/upload")
     .all(protectorMiddleware)
     .get(getUpload)
-    .post(postUpload);
+    /**form (upload.pug)에서 부여한 file의 이름 "video" 꼭 추가 */
+    .post(videoUpload.single("video"), postUpload);
 
 
 export default videoRouter; 

@@ -12,7 +12,7 @@ import {
 import { 
     protectorMiddleware, 
     publicOnlyMiddleware,
-    uploadFiles, 
+    avatarUpload, 
     } from "../middlewares";
 
 const userRouter = express.Router();
@@ -22,7 +22,8 @@ userRouter
     .route("/edit")
     .all(protectorMiddleware)
     .get(getEdit)
-    .post(uploadFiles.single("avatar"), postEdit);
+    /** multer를 먼저 쓰고 postEdit을 하면 Multer가 작동됨 */
+    .post(avatarUpload.single("avatar"), postEdit);
 userRouter
     .route("/change-password")
     .all(protectorMiddleware)

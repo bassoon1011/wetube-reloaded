@@ -56,16 +56,19 @@ export const getUpload = (req, res) => {
 
 /** upload.pug에 name으로 title을 줬기때문에 req.body로 그 이름의 데이터를 받을수 있음 */
 export const postUpload = async (req, res) => {
+    const { path: fileUrl } = req.file;
     const { title, description, hashtags } = req.body;
     try {
         await Video.create({
         /** 바로위에 title 적어놔서 그냥 title, 이거나 title: title 이거랑 같다 */
         title,
         description,
+        fileUrl,
         hashtags: Video.formatHashtags(hashtags),
         });
         return res.redirect("/");
     }   catch (error) {
+        console.log(error);
         return res.status(400).render("upload", {
             pageTitle: "Upload Video",
             errorMessage: error._message,

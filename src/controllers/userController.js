@@ -160,8 +160,10 @@ export const postEdit = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
         _id,
         {
-            /** 유저가 파일을 form으로 보낸다면 file.path 를 쓰고, 
-             * 파일이 존재하지 않는다면 기존 avatarUrl을 유지할거다  */
+            /** 유저가 파일을 form으로 보낸다면 file.path 를 쓰고, 파일이 존재하지 않는다면 기존 avatarUrl을 유지할거다.
+             * form에 file이 있다면 req에 있는 file object를 사용할수 있다는거고 그 말은 file.path가 존재 한다는 것.
+             * file이 없다면 user의 avatarUrl은 기존의 것과 같다. avatarUrl은 바로 위 req.session.user.avatarUrl에서 온 것.
+            */
             avatarUrl: file ? file.path : avatarUrl,
             name,
             email,

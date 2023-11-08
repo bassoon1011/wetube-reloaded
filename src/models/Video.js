@@ -8,8 +8,9 @@ const videoSchema = new mongoose.Schema({
     hashtags: [{ type: String, trim: true }],
     meta: {
         views: { type: Number, default: 0, required: true },
-        rating: { type: Number, default: 0, required: true },
     },
+    /** 비디오에 owner를 추가했고 그 이름은 objectId. 그리고 그 objectId는 User model에서 온다고 알려주는것 */
+    owner: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
 });
 
 /**  */

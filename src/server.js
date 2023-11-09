@@ -31,9 +31,10 @@ app.use(
 // localMiddleware가 session에 접근할수 있는 이유는 session middleware다음에 
 // 오기때문에 가능
 app.use(localsMiddleware);
-/** 브라우저에다가 폴더를 노출시키는 방법 */
+/** 브라우저에다가 폴더를 노출시키는 방법 (Express한테 사람들이 이 폴더 안에 있는 파일들을 볼 수 있게 해달라고 요청하는 것) */
 app.use("/uploads", express.static("uploads"));
-app.use("/", rootRouter);
+app.use("/assets", express.static("assets"));
+app.use("/", rootRouter); 
 app.use("/videos", videoRouter);
 app.use("/users", userRouter);
 

@@ -3,15 +3,19 @@ const path = require("path");
 
 module.exports = {
     /**Webpack에는 항상 entry와 output이 필요하다. */
-    entry: "./src/client/js/main.js",
+    entry: {
+        main: "./src/client/js/main.js",
+        videoPlayer: "./src/client/js/videoPlayer.js"
+    },
     mode: "development",
     watch: true,
-    plugins: [new MiniCssExtractPlugin({
-        filename: "css/styles.css",
-    }),
+    plugins: [
+        new MiniCssExtractPlugin({
+            filename: "css/styles.css",
+        }),
     ],  
     output: {
-        filename: "js/main.js",
+        filename: "js/[name].js",
         path: path.resolve(__dirname, "assets"),
         clean: true,
     },

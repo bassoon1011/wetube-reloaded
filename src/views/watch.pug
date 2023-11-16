@@ -3,6 +3,12 @@ extends base.pug
 block content
     video(src="/" + video.fileUrl, controls)
     div
+        button#play Play 
+        button#mute Mute
+        span#time 00:00/00:00
+        input(type="range", min="0" max="1")
+
+    div
         p=video.description
         small=video.createdAt
     div   
@@ -12,3 +18,7 @@ block content
         a(href=`${video.id}/edit`) Edit Video &rarr;
         br
         a(href=`${video.id}/delete`) Delete Video &rarr;
+
+block scripts   
+    //- static/js를 쓰는 이유는 서버가 /static을 사용하도록 설정되어있고, assets 폴더에 접근 권한을 주기 위해서.
+    script(src="/static/js/videoPlayer.js")

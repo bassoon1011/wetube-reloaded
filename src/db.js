@@ -3,8 +3,10 @@ import mongoose from "mongoose"
 mongoose.connect(process.env.DB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useFindAndModify: false,
-    useCreateIndex: true,
+
+    // 니코가 쓰는거랑 버젼 차이 때문에 일어났을거야.
+    // useFindAndModify: false,
+    // useCreateIndex: true,
 });
 
 const db = mongoose.connection;

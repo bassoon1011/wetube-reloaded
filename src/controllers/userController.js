@@ -1,13 +1,13 @@
 import User from "../models/User";
-import Video from "../models/Video";
-import fetch from "node-fetch";
+// import Video from "../models/Video";
+// import fetch from "node-fetch";
 import bcrypt from "bcrypt";
 
-export const getJoin = (req, res) => 
-    res.render("join", { pageTitle: "Join" });
+export const getJoin = (req, res) => res.render("join", { pageTitle: "Join" });
 
 export const postJoin = async (req, res) => {
     const { name, username, email, password, password2, location } = req.body;
+    console.log(req.body);
     const pageTitle = "Join";
     if(password !== password2) {
         return res.status(400).render("join", {
@@ -23,13 +23,14 @@ export const postJoin = async (req, res) => {
         });
     }
     try {
-        await User.create({
+        const user = await User.create({
             name, 
             username, 
             email, 
             password,
             location,
         });
+        console.log(user);
     return res.redirect("/login");
     } catch (error) {
         return res.status(400).render("join", {
@@ -38,11 +39,12 @@ export const postJoin = async (req, res) => {
         });
     }
 };
-export const getLogin = (req, res) =>
-    res.render("login", { pageTitle: "Login" });
+
+export const getLogin = (req, res) => res.render("login", { pageTitle: "Login" });
 
 export const postLogin = async (req, res) => {
     const { username, password } = req.body;
+
     const pageTitle = "Login";
     const user = await User.findOne({ username, socialOnly: false });
     if (!user) {
@@ -58,7 +60,7 @@ export const postLogin = async (req, res) => {
             errorMessage: "Wrong password",
         });
     }
-    req.seesion.loggedIn = true;
+    req.session.loggedIn = true;
     req.session.user = user;
     return res.redirect("/");
 };
@@ -149,6 +151,7 @@ export const logout = (req, res) => {
 export const getEdit = (req, res) => {
     return res.render("edit-profile", { pageTitle: "Edit Profile" });
 };
+
 export const postEdit = async (req, res) => {
     /** Session에서 로그인된 사용자를 확인하는 것 */
     const {
@@ -158,6 +161,7 @@ export const postEdit = async (req, res) => {
         body: { name, email, username, location },
         file,
     } =req;
+
     const updatedUser = await User.findByIdAndUpdate(
         _id,
         {
@@ -173,6 +177,7 @@ export const postEdit = async (req, res) => {
         },
         { new: true }
     );
+
     /** res.session.user안에 있는 내용을 전해주는 것 */
     req.session.user = updatedUser
     return res.redirect("/users/edit");
@@ -185,38 +190,49 @@ export const getChangePassword = (req, res) => {
     /** change-password를 base template로부터 extend 할건데 base template에는 pageTitle이 꼭 필요하다 */
     return res.render("users/change-password", { pageTitle: "Change Password" });
 };
+
+
 export const postChangePassword = async (req, res) => {
+
     const {
         session: {
-            user: { id },
+            user: { _id },
         },
         body: { oldPassword, newPassword, newPasswordConfirmation },
     } = req;
+
     const user = await User.findById(_id);
     const ok = await bcrypt.compare(oldPassword, user.password);
+
     if (!ok) {
         return res.status(400).render("users/change-password", {
             pageTitle: "Change Password",
             errorMessage: "The current password is incorrent",
         });
     }
+
     if (newPassword !== newPasswordConfirmation) {
         return res.status(400).render("users/change-password", {
             pageTitle: "Change Password",
             errorMessage: "The password does not match the confirmation",
         });
     }
+
     user.password = newPassword;
+
     await user.save();
+
     return res.redirect("/users/logout");
 };
 
 export const see = async (req,res) => {
     const { id } = req.params;
     const user = await User.findById(id).populate("videos");
+    
     if (!user) {
         return res.status(404).render("404", { pageTitle: "User not found." });
     }
+    
     return res.render("users/profile", {
         pageTitle: user.name,
         user,

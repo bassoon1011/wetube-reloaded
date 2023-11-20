@@ -50,14 +50,14 @@ export const postLogin = async (req, res) => {
     if (!user) {
         return res.status(400).render("login", {
             pageTitle,
-            errorMessage: "An account with this username does not exists.",
+            errorMessage: "Username and/or password fail",
         });
     }
     const ok = await bcrypt.compare(password, user.password);
     if (!ok) {
         return res.status(400).render("login", {
             pageTitle,
-            errorMessage: "Wrong password",
+            errorMessage: "Username and/or password fail",
         });
     }
     req.session.loggedIn = true;

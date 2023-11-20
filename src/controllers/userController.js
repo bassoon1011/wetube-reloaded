@@ -64,83 +64,83 @@ export const postLogin = async (req, res) => {
     return res.redirect("/");
 };
 
-export const startGithubLogin = (req, res) => {
-    const baseUrl = "https://github.com/login/oauth/authorize";
-    const config = {
-        client_id: "process.env.GH_CLIENT",
-        allow_signup: false,
-        /** scope로 필요한걸 지정해 놓으면 access_token으로 이 정보를 가져옴 */
-        scope: "read:user user:email",
-    };
-    const params = new URLSearchParams(config).toString();
-    const finalUrl = `${baseUrl}?${params}`;
-    return res.redirect(finalUrl); 
-};
+// export const startGithubLogin = (req, res) => {
+//     const baseUrl = "https://github.com/login/oauth/authorize";
+//     const config = {
+//         client_id: "process.env.GH_CLIENT",
+//         allow_signup: false,
+//         /** scope로 필요한걸 지정해 놓으면 access_token으로 이 정보를 가져옴 */
+//         scope: "read:user user:email",
+//     };
+//     const params = new URLSearchParams(config).toString();
+//     const finalUrl = `${baseUrl}?${params}`;
+//     return res.redirect(finalUrl); 
+// };
 
-export const finishGithubLogin = async (req, res) => {
-    const baseUrl = "https://github.com/login/oauth/access_token"
-    const config = {
-        client_id: process.env.GH_CLIENT,
-        client_secret: process.env.GH_SECRET,
-        code: req.query.code,
-    };
-    const params = new URLSearchParams(config).toString();
-    const finalUrl = `${baseUrl}?${params}`;
-    const tokenRequest = await (
-        await fetch(finalUrl, {
-            method: "POST",
-            headers: {
-                Accept: "application/json",
-            },
-        })
-    ).json();
-    /** 이 token으로 Github API랑 상호작용 가능 */
-    if ("access_token" in tokenRequest) {
-        const { access_token } = tokenRequest;
-        const apiUrl = "https://api.github.com/user";
-        const userData = await (
-            await fetch( `${apiUrl}/user`, {
-                headers: {
-                    Authorization: `token ${access_token}`,
-                },
-            })
-        ).json();
-        console.log(userData);
-        const emailData = await (
-            await fetch( `${apiUrl}/user/emails`, {
-                headers: {
-                    Authorization: `token ${access_token}`,
-                },
-            })
-        ).json();
-        const emailObj = emailData.find(
-            (email) => email.primary === true && email.verified === true 
-        );
-        if (!emailObj) {
-            // set notification
-            return res.redirect("/login");
-        }
-        let user = await User.findOne({ email: emailObj.email });
-        if (!user) {
-            user = await User.create({
-                avatarUrl: userData.avatar_url,
-                name: userData.name,
-                username: userData.login,
-                email: emailObj.email,
-                password:"",
-                socialOnly: true,
-                location: userData.location,
-            });
-        }
-        /** 프론트엔드는 이 세션으로부터 정보를 얻는다. 유저가 로그인할때만 session이 입력되기때문에 profile edit을 할때에도 
-         * session을 업데이트 해줘야함 */
-        req.session.loggedIn = true;
-        req.session.user = user;
-        return res.redirect("/");
-        } else {
-            return res.redirect("/login");
-        }
-};
+// export const finishGithubLogin = async (req, res) => {
+//     const baseUrl = "https://github.com/login/oauth/access_token"
+//     const config = {
+//         client_id: process.env.GH_CLIENT,
+//         client_secret: process.env.GH_SECRET,
+//         code: req.query.code,
+//     };
+//     const params = new URLSearchParams(config).toString();
+//     const finalUrl = `${baseUrl}?${params}`;
+//     const tokenRequest = await (
+//         await fetch(finalUrl, {
+//             method: "POST",
+//             headers: {
+//                 Accept: "application/json",
+//             },
+//         })
+//     ).json();
+//     /** 이 token으로 Github API랑 상호작용 가능 */
+//     if ("access_token" in tokenRequest) {
+//         const { access_token } = tokenRequest;
+//         const apiUrl = "https://api.github.com/user";
+//         const userData = await (
+//             await fetch( `${apiUrl}/user`, {
+//                 headers: {
+//                     Authorization: `token ${access_token}`,
+//                 },
+//             })
+//         ).json();
+//         console.log(userData);
+//         const emailData = await (
+//             await fetch( `${apiUrl}/user/emails`, {
+//                 headers: {
+//                     Authorization: `token ${access_token}`,
+//                 },
+//             })
+//         ).json();
+//         const emailObj = emailData.find(
+//             (email) => email.primary === true && email.verified === true 
+//         );
+//         if (!emailObj) {
+//             // set notification
+//             return res.redirect("/login");
+//         }
+//         let user = await User.findOne({ email: emailObj.email });
+//         if (!user) {
+//             user = await User.create({
+//                 avatarUrl: userData.avatar_url,
+//                 name: userData.name,
+//                 username: userData.login,
+//                 email: emailObj.email,
+//                 password:"",
+//                 socialOnly: true,
+//                 location: userData.location,
+//             });
+//         }
+//         /** 프론트엔드는 이 세션으로부터 정보를 얻는다. 유저가 로그인할때만 session이 입력되기때문에 profile edit을 할때에도 
+//          * session을 업데이트 해줘야함 */
+//         req.session.loggedIn = true;
+//         req.session.user = user;
+//         return res.redirect("/");
+//         } else {
+//             return res.redirect("/login");
+//         }
+// };
 
 export const logout = (req, res) => {
     req.session.destroy();

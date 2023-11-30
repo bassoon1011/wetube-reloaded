@@ -1,8 +1,9 @@
 extends base.pug
 
 block content
-    video(src="/" + video.fileUrl, controls)
-    div
+div#videoContainer(data-videoId=video._id)
+    video(src="/" + video.fileUrl)
+    div#videoControls
         button#play Play 
         button#mute Mute
         input(type="range",step="0.1", value=0.5, min="0" max="1")#volume
@@ -10,6 +11,11 @@ block content
             span#currentime 00:00
             span  / 
             span#totalTime 00:00
+        div 
+            input(type="range",step="1", value=0, min="0")#timeline
+        div 
+            button#fullScreen Enter Full Screen
+
     //-
         div 
             p=video.description

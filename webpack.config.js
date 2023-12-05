@@ -5,7 +5,8 @@ module.exports = {
     /**Webpack에는 항상 entry와 output이 필요하다. */
     entry: {
         main: "./src/client/js/main.js",
-        videoPlayer: "./src/client/js/videoPlayer.js"
+        videoPlayer: "./src/client/js/videoPlayer.js",
+        recorder: "./src/client/js/recorder.js",
     },
     mode: "development",
     watch: true,

@@ -2,6 +2,7 @@
 import express from "express";
 import morgan from "morgan";
 import session from "express-session";
+import flash from "express-flash";
 import MongoStore from "connect-mongo";
 import rootRouter from "./routers/rootRouter";
 import videoRouter from "./routers/videoRouter";
@@ -29,7 +30,7 @@ app.use(
     }) 
 );
 
-
+app.use(flash());
 // localMiddleware가 session에 접근할수 있는 이유는 session middleware다음에 
 // 오기때문에 가능
 app.use(localsMiddleware);
